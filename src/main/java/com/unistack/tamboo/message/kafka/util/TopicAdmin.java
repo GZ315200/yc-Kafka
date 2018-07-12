@@ -7,24 +7,18 @@ import com.unistack.tamboo.message.kafka.bean.ClusterDescription;
 import com.unistack.tamboo.message.kafka.bean.TopicDescription;
 import com.unistack.tamboo.message.kafka.bean.TopicPartitionInfo;
 import com.unistack.tamboo.message.kafka.exceptions.ConnectException;
-import kafka.server.ConfigHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.acl.*;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.TopicConfig;
-import org.apache.kafka.common.config.types.Password;
 import org.apache.kafka.common.errors.*;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.apache.kafka.common.resource.Resource;
 import org.apache.kafka.common.resource.ResourceFilter;
 import org.apache.kafka.common.resource.ResourceType;
-import org.apache.kafka.common.security.plain.PlainLoginModule;
-import org.apache.kafka.common.security.scram.ScramLoginModule;
-import org.apache.kafka.common.security.scram.ScramMechanism;
 import org.apache.kafka.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +27,8 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import static com.unistack.tamboo.commons.utils.ConfigHelper.jaasConfigProperty;
+import static com.unistack.tamboo.message.kafka.util.ConfigHelper.jaasConfigProperty;
+
 
 /**
  * @author Gyges Zean
@@ -843,6 +838,7 @@ public class TopicAdmin implements AutoCloseable {
         }
         return key;
     }
+
 
 
     public ConfigResource alertTopicSaslConfig(String topic, String username, String privateKey) {

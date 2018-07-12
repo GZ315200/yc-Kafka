@@ -2,7 +2,7 @@ package com.unistack.tamboo.message.kafka.util;
 
 import com.google.common.collect.Lists;
 
-import com.unistack.tamboo.commons.utils.Callback;
+import com.unistack.tamboo.message.kafka.bean.Callback;
 import com.unistack.tamboo.message.kafka.exceptions.ConnectException;
 import com.unistack.tamboo.message.kafka.exceptions.KafkaException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

@@ -1,7 +1,7 @@
 package com.unistack.tamboo.message.kafka.util;
 
 
-import com.unistack.tamboo.commons.utils.Callback;
+import com.unistack.tamboo.message.kafka.bean.Callback;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
