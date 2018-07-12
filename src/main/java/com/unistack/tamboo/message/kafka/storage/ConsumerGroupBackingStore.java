@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import static com.unistack.tamboo.commons.utils.CommonUtils.getSecurityProps;
+import static com.unistack.tamboo.message.kafka.util.CommonUtils.getSecurityProps;
 
 
 /**

@@ -2,7 +2,7 @@ package com.unistack.tamboo.message.kafka.util;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.unistack.tamboo.commons.utils.errors.GeneralServiceException;
+import com.unistack.tamboo.message.kafka.errors.GeneralServiceException;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.FutureTask;
-
-import static com.unistack.tamboo.commons.utils.CommonUtils.getSecurityProps;
+import static com.unistack.tamboo.message.kafka.util.CommonUtils.getSecurityProps;
 
 /**
  * @author Gyges Zean
