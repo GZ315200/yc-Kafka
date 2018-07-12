@@ -2,10 +2,10 @@ package com.unistack.tamboo.message.kafka.util.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unistack.tamboo.commons.utils.errors.DataException;
-import com.unistack.tamboo.commons.utils.errors.SerializationException;
-import com.unistack.tamboo.commons.utils.json.serialization.JsonDeserializer;
-import com.unistack.tamboo.commons.utils.json.serialization.JsonSerializer;
+import com.unistack.tamboo.message.kafka.errors.DataException;
+import com.unistack.tamboo.message.kafka.errors.SerializationException;
+import com.unistack.tamboo.message.kafka.util.json.serialization.JsonDeserializer;
+import com.unistack.tamboo.message.kafka.util.json.serialization.JsonSerializer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -56,10 +56,12 @@ public class JsonConverter implements Converter {
             if (jsonValue != null) {
                 byte[] contents = jsonValue.get("content").binaryValue();
                 String topic = jsonValue.get("topic").asText();
-                if (topic != null && contents != null) record = GenericRecord.
-                        instance(topic)
-                        .content(contents)
-                        .build();
+                if (topic != null && contents != null) {
+                    record = GenericRecord.
+                            instance(topic)
+                            .content(contents)
+                            .build();
+                }
             }
         } catch (IOException e) {
             throw new DataException("Converting string to object failed.", e);
