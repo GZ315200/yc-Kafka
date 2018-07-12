@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<configuration scan="true" scanPeriod="10 seconds">
+
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
+
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="[%p %d{yyyy-MM-dd HH:mm:ss}] {%c:%L} - %m%n"/>
+    <property name="FILE_LOG_PATTERN"
+              value="[%p %d{yyyy-MM-dd HH:mm:ss}] {%c:%L} - %m%n"/>
+
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>
+                [%p %d{yyyy-MM-dd HH:mm:ss}] {%c:%L} - %m%n
+            </pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                logs/tamboo-kafka.%d{yyyy-MM-dd}.log
+            </FileNamePattern>
+            <maxHistory>3</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>100MB</maxFileSize>
+        </triggeringPolicy>
+
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{yyyy:MM:dd HH:mm:ss.SSS} %-5level %logger{32} \(%L\) - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
