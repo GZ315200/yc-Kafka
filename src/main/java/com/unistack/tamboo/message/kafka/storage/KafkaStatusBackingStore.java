@@ -228,8 +228,9 @@ public class KafkaStatusBackingStore implements StatusBackingStore {
                                                  final CacheEntry<V> entry, final boolean safeWrite) {
         final int sequence;
         synchronized (this) {
-            if (safeWrite && !entry.canWriteSafely(status))
+            if (safeWrite && !entry.canWriteSafely(status)) {
                 return;
+            }
             sequence = entry.increment();
         }
 
@@ -241,8 +242,9 @@ public class KafkaStatusBackingStore implements StatusBackingStore {
                 if (exception != null) {
                     if (exception instanceof RetriableException) {
                         synchronized (KafkaStatusBackingStore.this) {
-                            if ((safeWrite && !entry.canWriteSafely(status, sequence)))
+                            if ((safeWrite && !entry.canWriteSafely(status, sequence))) {
                                 return;
+                            }
                         }
                         kafkaTopicBaseLog.send(key, value, this);
                     } else {
