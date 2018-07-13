@@ -124,26 +124,33 @@ public class OffsetOperator {
         for (Long offset : offsets) {
             FutureTask<Map<Object, byte[]>> task = new FutureTask<>(() -> {
                 Map<Object, byte[]> data = Maps.newHashMap();
-                KafkaConsumer<byte[], byte[]> consumer = createConsumer(bootstrapServers);
-
-                List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
-                for (PartitionInfo partitionInfo : partitionInfos) {
-                    TopicPartition topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
-                    consumer.assign(Collections.singleton(topicPartition));
-                    consumer.seek(topicPartition, offset);
-                    logger.info("assignment topicPartition is -> " + consumer.assignment().toString());
-                    ConsumerRecords<byte[], byte[]> records = consumer.poll(POLL_TIMEOUT_MS);
-                    while (!records.isEmpty()) {
-                        Iterator<ConsumerRecord<byte[], byte[]>> it = records.iterator();
-                        if (it.hasNext()) {
-                            ConsumerRecord<byte[], byte[]> record = it.next();
-                            data.put(record.timestamp(), record.value());
-                            break;
+                KafkaConsumer<byte[], byte[]> consumer = null;
+                try {
+                    consumer = createConsumer(bootstrapServers);
+                    List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
+                    for (PartitionInfo partitionInfo : partitionInfos) {
+                        TopicPartition topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
+                        consumer.assign(Collections.singleton(topicPartition));
+                        consumer.seek(topicPartition, offset);
+                        logger.info("assignment topicPartition is -> " + consumer.assignment().toString());
+                        ConsumerRecords<byte[], byte[]> records = consumer.poll(POLL_TIMEOUT_MS);
+                        while (!records.isEmpty()) {
+                            Iterator<ConsumerRecord<byte[], byte[]>> it = records.iterator();
+                            if (it.hasNext()) {
+                                ConsumerRecord<byte[], byte[]> record = it.next();
+                                data.put(record.timestamp(), record.value());
+                                break;
+                            }
                         }
+                        consumer.commitSync();
                     }
-                    consumer.commitSync();
+                } catch (Exception e) {
+                    logger.error("", e);
+                } finally {
+                    if (consumer != null) {
+                        consumer.close();
+                    }
                 }
-                consumer.close();
                 return data;
             });
             taskList.put(offset, task);
