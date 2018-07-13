@@ -145,12 +145,15 @@ public class ConsumerGroupBackingStore implements OffsetBackingStore {
                     //当前topic消费的offset
                     long offset = oam.offset();
                     consumer.assign(Lists.newArrayList(tp));
-                    consumer.seekToEnd(Lists.newArrayList(tp));
-                    //topic的LEO
-                    long logEndOffset = consumer.position(tp);
-                    consumer.seekToBeginning(Lists.newArrayList(tp));
-                    //topic的LSO
-                    long logStartOffset = consumer.position(tp);
+
+                    long logEndOffset = consumer.endOffsets(Lists.newArrayList(tp)).get(tp);
+                    long logStartOffset = consumer.beginningOffsets(Lists.newArrayList(tp)).get(tp);
+//                    consumer.seekToEnd(Lists.newArrayList(tp));
+//                    //topic的LEO
+//                    long logEndOffset = consumer.position(tp);
+//                    consumer.seekToBeginning(Lists.newArrayList(tp));
+//                    //topic的LSO
+//                    long logStartOffset = consumer.position(tp);
                     ConsumerOffset consumerOffset = new ConsumerOffset(group, tp.topic(), tp.partition(),
                             offset, logEndOffset, logStartOffset, summary.consumerId() + "_" + summary.host());
                     offsetList.add(consumerOffset);
