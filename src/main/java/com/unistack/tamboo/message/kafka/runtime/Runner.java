@@ -91,25 +91,6 @@ public class Runner {
     }
 
 
-    public static Password jaasConfigProperty(String mechanism, String username, String password) {
-        return new Password(loginModule(mechanism) + " required username=" + username + " password=" + password + ";");
-    }
-
-    private static String loginModule(String mechanism) {
-        String loginModule;
-        switch (mechanism) {
-            case "PLAIN":
-                loginModule = PlainLoginModule.class.getName();
-                break;
-            default:
-                if (ScramMechanism.isScram(mechanism))
-                    loginModule = ScramLoginModule.class.getName();
-                else
-                    throw new IllegalArgumentException("Unsupported mechanism " + mechanism);
-        }
-        return loginModule;
-    }
-
     public static void main(String[] args) {
         Map<String, Object> config = new HashMap<>();
         while (true) {

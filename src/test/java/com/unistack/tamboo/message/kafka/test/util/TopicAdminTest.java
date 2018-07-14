@@ -12,8 +12,7 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static com.unistack.tamboo.message.kafka.runtime.Runner.jaasConfigProperty;
-
+import static com.unistack.tamboo.message.kafka.util.ConfigHelper.jaasConfigProperty;
 
 /**
  * @author Gyges Zean

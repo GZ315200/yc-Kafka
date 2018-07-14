@@ -30,7 +30,7 @@ public enum Protocol {
         PORT_TO_SECURITY_PROTOCOL = Collections.unmodifiableMap(portToSecurityProtocol);
     }
 
-    private Protocol(int port) {
+    Protocol(int port) {
         this.port = port;
     }
 

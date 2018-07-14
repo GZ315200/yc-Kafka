@@ -50,10 +50,26 @@ public class TopicAdmin implements AutoCloseable {
      * A builder of {@link org.apache.kafka.clients.admin.NewTopic} instances.
      */
     public static class NewTopicBuilder {
-        private String name;//topic name
-        private int numPartitions = 0; //topic partition number
-        private short replicationFactor;// topic replication number.
-        private Map<String, String> configs = Maps.newHashMap();//topic configuration
+
+        /**
+         * topic name
+         */
+        private String name;
+
+        /**
+         * topic partition number
+         */
+        private int numPartitions = 0;
+
+        /**
+         * topic replication number.
+         */
+        private short replicationFactor;
+
+        /**
+         * topic configuration
+         */
+        private Map<String, String> configs = Maps.newHashMap();
 
         /**
          * constructor with topic name
@@ -192,7 +208,9 @@ public class TopicAdmin implements AutoCloseable {
      * @return
      */
     public boolean createTopic(NewTopic topic) {
-        if (topic == null) return false;
+        if (topic == null) {
+            return false;
+        }
         Set<String> newTopicNames = createTopics(topic);
         return newTopicNames.contains(topic.name());
     }
@@ -204,7 +222,9 @@ public class TopicAdmin implements AutoCloseable {
      * @return
      */
     public boolean deleteTopic(String topic) {
-        if (StringUtils.isBlank(topic)) return false;
+        if (StringUtils.isBlank(topic)) {
+            return false;
+        }
         Set<String> newTopicNames = deleteTopics(topic);
         return newTopicNames.contains(topic);
     }
@@ -217,7 +237,9 @@ public class TopicAdmin implements AutoCloseable {
      * @return
      */
     public boolean createTopicForAcl(String topic, String user) {
-        if (StringUtils.isBlank(topic)) return false;
+        if (StringUtils.isBlank(topic)) {
+            return false;
+        }
         createGroupForAcl();//默认创建所有group都可以访问
         String topicName = createTopicForAcls(topic, "", null, null, user);
         return topicName.equalsIgnoreCase(topic);
@@ -249,7 +271,9 @@ public class TopicAdmin implements AutoCloseable {
                 }
             }
         }
-        if (topicByName.isEmpty()) return Collections.emptySet();
+        if (topicByName.isEmpty()) {
+            return Collections.emptySet();
+        }
         String bootstrapServers = bootstrapServers();
         String topicNameList = Utils.join(topicByName.keySet(), ",");
 
@@ -318,7 +342,9 @@ public class TopicAdmin implements AutoCloseable {
                 }
             }
         }
-        if (topicNames.isEmpty()) return Collections.emptySet();
+        if (topicNames.isEmpty()) {
+            return Collections.emptySet();
+        }
         String bootstrapServers = bootstrapServers();
         String topicNameList = Utils.join(topicNames, ",");
 
@@ -385,7 +411,9 @@ public class TopicAdmin implements AutoCloseable {
                 }
             }
         }
-        if (topicNames.isEmpty()) return Collections.emptyMap();
+        if (topicNames.isEmpty()) {
+            return Collections.emptyMap();
+        }
         String bootstrapServers = bootstrapServers();
         String topicNameList = Utils.join(topicNames, ",");
 
