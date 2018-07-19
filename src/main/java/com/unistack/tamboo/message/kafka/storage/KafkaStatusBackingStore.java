@@ -47,7 +47,7 @@ public class KafkaStatusBackingStore implements StatusBackingStore {
     public static final String RUNNER_ID_KEY_NAME = "runner_id";
 
     private String topic;
-//    private final Table<String, Integer, CacheEntry<RunnerStatus>> tasks;
+
     private KafkaTopicBaseLog<String, byte[]> kafkaTopicBaseLog;
 
     private JsonConverter converter = new JsonConverter();
@@ -140,7 +140,9 @@ public class KafkaStatusBackingStore implements StatusBackingStore {
         }
 
         RunnerStatus status = parseRunnerStatus(runner, value);
-        if (status == null) return;
+        if (status == null) {
+            return;
+        }
 
         synchronized (this) {
             log.trace("Received runner {} status update {}", runner, status);
@@ -218,6 +220,7 @@ public class KafkaStatusBackingStore implements StatusBackingStore {
     }
 
 
+    @Override
     public synchronized RunnerStatus get(String runner) {
         CacheEntry<RunnerStatus> entry = runners.get(runner);
         return entry == null ? null : entry.get();
