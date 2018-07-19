@@ -3,6 +3,7 @@ package com.unistack.tamboo.message.kafka.util;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.unistack.tamboo.message.kafka.errors.GeneralServiceException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.FutureTask;
+
 import static com.unistack.tamboo.message.kafka.util.CommonUtils.getSecurityProps;
 
 /**
@@ -51,6 +53,45 @@ public class OffsetOperator {
         consumerConfigs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
         consumerConfigs.putAll(getSecurityProps(bootstrapServers));
         return new KafkaConsumer<>(consumerConfigs);
+    }
+
+
+    /**
+     * get consumer record with offset & key
+     *
+     * @param key
+     * @param offset
+     * @param bootstrapServers
+     * @param topic
+     * @return
+     */
+    public String record(String key, long offset, String bootstrapServers, String topic) {
+        KafkaConsumer<byte[], byte[]> consumer = null;
+        String value = "";
+        try {
+            consumer = createConsumer(bootstrapServers);
+            List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
+            for (PartitionInfo partitionInfo : partitionInfos) {
+                TopicPartition topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
+                consumer.assign(Collections.singleton(topicPartition));
+                consumer.seek(topicPartition, offset);
+                ConsumerRecords<byte[], byte[]> records = consumer.poll(POLL_TIMEOUT_MS);
+                while (!records.isEmpty()) {
+                    Iterator<ConsumerRecord<byte[], byte[]>> it = records.iterator();
+                    if (it.hasNext()) {
+                        ConsumerRecord<byte[], byte[]> record = it.next();
+                        if (StringUtils.equalsIgnoreCase(new String(record.key()), key)) {
+                            value = new String(record.value());
+                            break;
+                        }
+                    }
+                }
+                consumer.commitSync();
+            }
+        } catch (Exception e) {
+            logger.error("Failed to get record with key.", e);
+        }
+        return value;
     }
 
 
