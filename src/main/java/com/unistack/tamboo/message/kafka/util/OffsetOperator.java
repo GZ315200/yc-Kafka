@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.FutureTask;
+import java.util.regex.Pattern;
 
 import static com.unistack.tamboo.message.kafka.util.CommonUtils.getSecurityProps;
 
@@ -30,6 +31,8 @@ public class OffsetOperator {
      * 消费组id
      */
     private static final String GROUP = "system";
+
+    public static final String CONFIG_CONSUMER_GROUP_ID = "config";
     /**
      * session超时时间
      */
@@ -64,32 +67,50 @@ public class OffsetOperator {
      * @param topic
      * @return
      */
-    public String record(String key,String bootstrapServers, String topic) {
+    public static String record(String key, String bootstrapServers, String topic) {
         KafkaConsumer<byte[], byte[]> consumer = null;
         String value = "";
         try {
-            consumer = createConsumer(bootstrapServers);
-            List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
-            for (PartitionInfo partitionInfo : partitionInfos) {
-                TopicPartition topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
-                consumer.assign(Collections.singleton(topicPartition));
+            consumer = getConfigConsumer(bootstrapServers);
+            List<TopicPartition> tpList = getTopicPartList(consumer.partitionsFor(topic));
+            consumer.assign(tpList);
+            consumer.seekToBeginning(tpList);
+            while (true) {
                 ConsumerRecords<byte[], byte[]> records = consumer.poll(POLL_TIMEOUT_MS);
-                while (!records.isEmpty()) {
-                    Iterator<ConsumerRecord<byte[], byte[]>> it = records.iterator();
-                    if (it.hasNext()) {
-                        ConsumerRecord<byte[], byte[]> record = it.next();
-                        if (StringUtils.equalsIgnoreCase(new String(record.key()), key)) {
-                            value = new String(record.value());
-                            break;
-                        }
+                for (ConsumerRecord<byte[], byte[]> record : records) {
+                    if (StringUtils.equalsIgnoreCase(new String(record.key()), key)) {
+                        value = new String(record.value());
+                        break;
                     }
                 }
-                consumer.commitSync();
             }
         } catch (Exception e) {
             logger.error("Failed to get record with key.", e);
+        } finally {
+            if (consumer != null) {
+                consumer.close();
+            }
         }
         return value;
+    }
+
+    private static List<TopicPartition> getTopicPartList(List<PartitionInfo> partInfoList) {
+        List<TopicPartition> tpList = new ArrayList<TopicPartition>();
+        for (PartitionInfo pi : partInfoList) {
+            tpList.add(new TopicPartition(pi.topic(), pi.partition()));
+        }
+        return tpList;
+    }
+
+
+    public static KafkaConsumer<byte[], byte[]> getConfigConsumer(String bootstrapServers) {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, CONFIG_CONSUMER_GROUP_ID);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
+        props.putAll(CommonUtils.getSecurityProps(bootstrapServers));
+        return new KafkaConsumer<>(props);
     }
 
 
@@ -212,11 +233,12 @@ public class OffsetOperator {
     public static void main(String[] args) {
         String servers = "192.168.1.110:9093,192.168.1.111:9093,192.168.1.112:9093";
         String topic = "test";
-        List<Long> offsets = OffsetOperator.getOffsetsByTimestamp(Arrays.asList(1531379398059L, 1531379398110L, 1531379398113L), servers, topic);
-        System.out.println(offsets);
-        System.out.println("=====================================================");
-        System.out.println(OffsetOperator.getRecordValueByOffset(offsets, servers, topic));
-        System.out.println(OffsetOperator.recordJSONValue(Arrays.asList(1531379398059L, 1531379398110L, 1531379398113L), servers, topic));
+//        List<Long> offsets = OffsetOperator.getOffsetsByTimestamp(Arrays.asList(1531379398059L, 1531379398110L, 1531379398113L), servers, topic);
+//        System.out.println(offsets);
+//        System.out.println("=====================================================");
+//        System.out.println(OffsetOperator.getRecordValueByOffset(offsets, servers, topic));
+//        System.out.println(OffsetOperator.recordJSONValue(Arrays.asList(1531379398059L, 1531379398110L, 1531379398113L), servers, topic));
+        System.out.println(OffsetOperator.record("producer.properties", servers, "tamboo_config"));
     }
 
 
