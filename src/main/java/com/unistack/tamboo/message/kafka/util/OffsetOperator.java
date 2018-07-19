@@ -57,15 +57,14 @@ public class OffsetOperator {
 
 
     /**
-     * get consumer record with offset & key
+     * get consumer record withkey
      *
      * @param key
-     * @param offset
      * @param bootstrapServers
      * @param topic
      * @return
      */
-    public String record(String key, long offset, String bootstrapServers, String topic) {
+    public String record(String key,String bootstrapServers, String topic) {
         KafkaConsumer<byte[], byte[]> consumer = null;
         String value = "";
         try {
@@ -74,7 +73,6 @@ public class OffsetOperator {
             for (PartitionInfo partitionInfo : partitionInfos) {
                 TopicPartition topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
                 consumer.assign(Collections.singleton(topicPartition));
-                consumer.seek(topicPartition, offset);
                 ConsumerRecords<byte[], byte[]> records = consumer.poll(POLL_TIMEOUT_MS);
                 while (!records.isEmpty()) {
                     Iterator<ConsumerRecord<byte[], byte[]>> it = records.iterator();
