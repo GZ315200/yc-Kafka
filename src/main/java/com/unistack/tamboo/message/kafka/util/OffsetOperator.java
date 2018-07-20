@@ -94,6 +94,8 @@ public class OffsetOperator {
         return value;
     }
 
+
+
     private static List<TopicPartition> getTopicPartList(List<PartitionInfo> partInfoList) {
         List<TopicPartition> tpList = new ArrayList<TopicPartition>();
         for (PartitionInfo pi : partInfoList) {
@@ -228,6 +230,15 @@ public class OffsetOperator {
         }
         return results;
     }
+
+
+
+
+
+
+
+
+
 
 
     public static void main(String[] args) {
