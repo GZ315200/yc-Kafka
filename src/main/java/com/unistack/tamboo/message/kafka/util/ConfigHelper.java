@@ -42,10 +42,11 @@ public class ConfigHelper {
                 loginModule = PlainLoginModule.class.getName();
                 break;
             default:
-                if (ScramMechanism.isScram(mechanism))
+                if (ScramMechanism.isScram(mechanism)) {
                     loginModule = ScramLoginModule.class.getName();
-                else
+                } else {
                     throw new IllegalArgumentException("Unsupported mechanism " + mechanism);
+                }
         }
         return loginModule;
     }
