@@ -1,5 +1,6 @@
-package com.unistack.tamboo.message.kafka.kStream;
+package com.unistack.tamboo.message.kafka.kstream;
 
+import com.unistack.tamboo.message.kafka.util.ConfigHelper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -21,10 +22,8 @@ import static com.unistack.tamboo.message.kafka.util.CommonUtils.getSecurityProp
  * @author Gyges Zean
  * @date 2018/7/19
  */
-public class WordCount {
+public class WordCount extends ConfigHelper {
 
-
-    private static final String BOOTSTRAP_SERVERS = "192.168.1.110:9093,192.168.1.111:9093,192.168.1.112:9093";
 
     public static void main(String[] args) {
 
@@ -56,13 +55,13 @@ public class WordCount {
         final Serde<Long> longSerde = Serdes.Long();
 
 
-
 // Construct a `KStream` from the input topic "streams-plaintext-input", where message values
 // represent lines of text (for the sake of this example, we ignore whatever may be stored
 // in the message keys).
         KStream<String, String> textLines = builder.stream("streams-plaintext-input", Consumed.with(stringSerde, stringSerde));
 
         KTable<String, Long> wordCounts = textLines
+
                 // Split each text line, by whitespace, into words.  The text lines are the message
                 // values, i.e. we can ignore whatever data is in the message keys and thus invoke
                 // `flatMapValues` instead of the more generic `flatMap`.

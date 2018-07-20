@@ -14,6 +14,10 @@ import java.util.Map;
 public class ConfigHelper {
 
 
+
+    public static final String BOOTSTRAP_SERVERS = "192.168.1.110:9093,192.168.1.111:9093,192.168.1.112:9093";
+
+
     public static Password jaasConfigProperty(String mechanism, Map<String, Object> options) {
         StringBuilder builder = new StringBuilder();
         builder.append(loginModule(mechanism));

@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.FutureTask;
-import java.util.regex.Pattern;
 
 import static com.unistack.tamboo.message.kafka.util.CommonUtils.getSecurityProps;
 
