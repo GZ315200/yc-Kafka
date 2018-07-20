@@ -28,8 +28,8 @@ public class CommonUtils {
     private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
 
 
-    public static final String USERNAME = "admin";
-    public static final String PASSWORD = "admin123";
+    private static final String USERNAME = "admin";
+    private static final String PASSWORD = "admin123";
 
 
     /**
