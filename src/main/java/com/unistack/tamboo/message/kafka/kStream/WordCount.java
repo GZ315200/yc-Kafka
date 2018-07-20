@@ -24,7 +24,7 @@ import static com.unistack.tamboo.message.kafka.util.CommonUtils.getSecurityProp
 public class WordCount {
 
 
-    public static final String BOOTSTRAP_SERVERS = "192.168.1.110:9093,192.168.1.111:9093,192.168.1.112:9093";
+    private static final String BOOTSTRAP_SERVERS = "192.168.1.110:9093,192.168.1.111:9093,192.168.1.112:9093";
 
     public static void main(String[] args) {
 

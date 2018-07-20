@@ -51,10 +51,11 @@ public class KafkaTopicBaseLog<K, V> extends AbstractKafkaLog<K, V> {
             partitionInfos = consumer.partitionsFor(topic);
             Utils.sleep(Math.min(time.milliseconds() - started, 1000));
         }
-        if (partitionInfos == null)
+        if (partitionInfos == null) {
             throw new ConnectException("Could not look up partition metadata for offset backing store topic in" +
                     " allotted period. This could indicate a connectivity issue, unavailable topic partitions, or if" +
                     " this is your first use of the topic it may have taken too long to create.");
+        }
         for (PartitionInfo partitionInfo : partitionInfos) {
             partitions.add(new TopicPartition(partitionInfo.topic(), partitionInfo.partition()));
         }
@@ -135,8 +136,9 @@ public class KafkaTopicBaseLog<K, V> extends AbstractKafkaLog<K, V> {
         try {
             ConsumerRecords<K, V> records = consumer.poll(timeoutMs);
             commit();
-            for (ConsumerRecord<K, V> record : records)
+            for (ConsumerRecord<K, V> record : records) {
                 consumerCallback.onCompletion(null, record);
+            }
         } catch (WakeupException e) {
             // Expected on get() or stop(). The calling code should handle this
             throw e;
@@ -165,8 +167,9 @@ public class KafkaTopicBaseLog<K, V> extends AbstractKafkaLog<K, V> {
                 while (true) {
                     int numCallbacks;
                     synchronized (KafkaTopicBaseLog.class) {
-                        if (stopRequested)
+                        if (stopRequested) {
                             break;
+                        }
                     }
 
                     try {

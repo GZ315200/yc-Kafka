@@ -922,7 +922,9 @@ public class TopicAdmin implements AutoCloseable {
         }
         if (result > 0) {
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
 
