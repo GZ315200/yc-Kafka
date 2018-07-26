@@ -1,4 +1,4 @@
-package com.unistack.tamboo.message.kafka.producer;
+package com.unistack.tamboo.message.kafka.client;
 
 /**
  * @author Gyges Zean
